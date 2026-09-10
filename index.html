@@ -7,7 +7,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -22,163 +22,306 @@
             user-select: none;
         }
         
-        /* SECURITY: Mencegah gambar di-drag and drop ke desktop */
+        /* SECURITY: Mencegah gambar di-drag and drop */
         img {
             -webkit-user-drag: none;
             -khtml-user-drag: none;
             -moz-user-drag: none;
             -o-user-drag: none;
-            pointer-events: none; /* Opsional: membuat interaksi klik tembus ke div parent */
+            pointer-events: none; 
         }
 
         .section-transition {
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.5s ease;
         }
         
+        /* Menyembunyikan scrollbar tapi tetap bisa di-scroll */
         ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
+            display: none;
         }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animasi Modal */
+        .modal-enter { opacity: 1; pointer-events: auto; }
+        .modal-leave { opacity: 0; pointer-events: none; }
+        .modal-content-enter { transform: scale(1); opacity: 1; }
+        .modal-content-leave { transform: scale(0.95); opacity: 0; }
     </style>
 </head>
 <!-- SECURITY: oncontextmenu mencegah klik kanan, ondragstart mencegah drag -->
-<body class="antialiased flex flex-col min-h-screen" oncontextmenu="return false;" ondragstart="return false;">
+<body class="antialiased flex flex-col h-screen overflow-hidden" oncontextmenu="return false;" ondragstart="return false;">
 
-    <nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent pt-6 pb-10">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="flex justify-center items-center space-x-8 sm:space-x-12">
+    <nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 via-black/70 to-transparent pt-6 pb-12">
+        <div class="max-w-max mx-auto px-6 py-3 bg-white/5 backdrop-blur-md rounded-full border border-white/10">
+            <div class="flex justify-center items-center space-x-6 sm:space-x-10">
                 
-                <button onclick="navigate('personal')" class="nav-btn group relative text-sm sm:text-base font-medium transition-colors duration-300 text-white" id="nav-personal">
+                <button onclick="navigate('personal')" class="nav-btn group relative text-sm sm:text-base font-semibold transition-colors duration-300 text-white" id="nav-personal">
                     Personal
-                    <span class="nav-underline absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-gray-400 to-white transform scale-x-100 transition-transform duration-300 origin-left"></span>
+                    <span class="nav-underline absolute -bottom-1 left-0 w-full h-[2px] bg-white transform scale-x-100 transition-transform duration-300 origin-center"></span>
                 </button>
                 
-                <button onclick="navigate('video')" class="nav-btn group relative text-sm sm:text-base font-medium transition-colors duration-300 text-gray-500 hover:text-gray-300" id="nav-video">
+                <button onclick="navigate('video')" class="nav-btn group relative text-sm sm:text-base font-medium transition-colors duration-300 text-gray-500 hover:text-white" id="nav-video">
                     Video
-                    <span class="nav-underline absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-gray-400 to-white transform scale-x-0 transition-transform duration-300 origin-left"></span>
+                    <span class="nav-underline absolute -bottom-1 left-0 w-full h-[2px] bg-white transform scale-x-0 transition-transform duration-300 origin-center"></span>
                 </button>
                 
-                <button onclick="navigate('foto')" class="nav-btn group relative text-sm sm:text-base font-medium transition-colors duration-300 text-gray-500 hover:text-gray-300" id="nav-foto">
+                <button onclick="navigate('foto')" class="nav-btn group relative text-sm sm:text-base font-medium transition-colors duration-300 text-gray-500 hover:text-white" id="nav-foto">
                     Foto
-                    <span class="nav-underline absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-gray-400 to-white transform scale-x-0 transition-transform duration-300 origin-left"></span>
+                    <span class="nav-underline absolute -bottom-1 left-0 w-full h-[2px] bg-white transform scale-x-0 transition-transform duration-300 origin-center"></span>
                 </button>
 
-                <button onclick="navigate('film')" class="nav-btn group relative text-sm sm:text-base font-medium transition-colors duration-300 text-gray-500 hover:text-gray-300" id="nav-film">
+                <button onclick="navigate('film')" class="nav-btn group relative text-sm sm:text-base font-medium transition-colors duration-300 text-gray-500 hover:text-white" id="nav-film">
                     Film
-                    <span class="nav-underline absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-gray-400 to-white transform scale-x-0 transition-transform duration-300 origin-left"></span>
+                    <span class="nav-underline absolute -bottom-1 left-0 w-full h-[2px] bg-white transform scale-x-0 transition-transform duration-300 origin-center"></span>
                 </button>
 
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow relative w-full h-screen overflow-hidden">
+    <main class="flex-grow relative w-full h-full">
         
-        <!-- SECTION: PERSONAL -->
-        <section id="section-personal" class="section-transition absolute inset-0 w-full h-full opacity-100 translate-y-0 z-10">
-            <picture class="w-full h-full">
-                <source media="(min-width: 768px)" srcset="https://placehold.co/1920x1080/1a1a1a/404040?text=FOTO+DESKTOP+(LANDSCAPE)">
-                <img src="https://placehold.co/1080x1920/1a1a1a/404040?text=FOTO+MOBILE+(PORTRAIT)" alt="Fadlan" class="w-full h-full object-cover object-center grayscale">
-            </picture>
+        <!-- ========================================== -->
+        <!-- SECTION: PERSONAL (Split Screen / About Me) -->
+        <!-- ========================================== -->
+        <section id="section-personal" class="section-transition absolute inset-0 w-full h-full opacity-100 z-10 flex flex-col md:flex-row bg-black overflow-y-auto md:overflow-hidden">
             
-            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 md:via-black/30 to-transparent"></div>
-            
-            <div class="absolute bottom-0 left-0 w-full p-6 md:p-16 flex flex-col md:flex-row justify-between md:items-end items-start z-20">
-                <div class="mb-6 md:mb-0 transform transition-transform duration-700 hover:translate-x-2">
-                    <h1 class="text-6xl md:text-8xl font-bold tracking-tighter text-white mb-1 md:mb-2 drop-shadow-lg">Fadlan.</h1>
-                    <p class="text-lg md:text-2xl text-gray-300 font-light tracking-wide uppercase">Visual Director</p>
-                </div>
+            <!-- Kiri: Foto Samping (Sticky di Desktop) -->
+            <div class="w-full md:w-5/12 h-[50vh] md:h-full relative shrink-0">
+                <img src="https://placehold.co/1080x1920/1a1a1a/404040?text=FOTO+PROFESIONAL" alt="Fadlan" class="w-full h-full object-cover object-top grayscale">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black"></div>
                 
-                <div class="flex space-x-4 md:space-x-6 pb-2 md:pb-0">
-                    <a href="#" class="w-12 h-12 md:w-auto md:h-auto rounded-full bg-white/10 md:bg-transparent backdrop-blur-md md:backdrop-blur-none flex items-center justify-center text-xl md:text-3xl text-gray-300 hover:text-white hover:bg-white/20 md:hover:bg-transparent transition-all duration-300">
-                        <i class="fa-brands fa-instagram"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 md:w-auto md:h-auto rounded-full bg-white/10 md:bg-transparent backdrop-blur-md md:backdrop-blur-none flex items-center justify-center text-xl md:text-3xl text-gray-300 hover:text-white hover:bg-white/20 md:hover:bg-transparent transition-all duration-300">
-                        <i class="fa-brands fa-linkedin"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 md:w-auto md:h-auto rounded-full bg-white/10 md:bg-transparent backdrop-blur-md md:backdrop-blur-none flex items-center justify-center text-xl md:text-3xl text-gray-300 hover:text-white hover:bg-white/20 md:hover:bg-transparent transition-all duration-300">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </a>
+                <!-- Nama & Role -->
+                <div class="absolute bottom-0 left-0 w-full p-8 md:p-12 z-20">
+                    <h1 class="text-5xl md:text-6xl font-bold tracking-tighter text-white mb-2 drop-shadow-lg">Fadlan.</h1>
+                    <p class="text-lg md:text-xl text-gray-400 font-light tracking-widest uppercase">Visual Director</p>
                 </div>
             </div>
-        </section>
-
-        <!-- SECTION: VIDEO -->
-        <section id="section-video" class="section-transition absolute inset-0 w-full h-full hidden opacity-0 translate-y-8 z-0 overflow-y-auto pt-28 pb-16 px-4 sm:px-8">
-            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Kanan: About Me & Experience (Scrollable) -->
+            <div class="w-full md:w-7/12 h-auto md:h-full overflow-y-auto hide-scrollbar p-8 md:p-16 md:pt-32 pb-24">
                 
-                <div class="group relative rounded-2xl overflow-hidden aspect-video bg-gray-900 cursor-pointer">
-                    <!-- Class pointer-events-auto ditambah di bawah agar klik div tetap bisa meski gambar di-disable (security) -->
-                    <img src="https://placehold.co/1280x720/1f2937/4b5563?text=THUMBNAIL+VIDEO+1" class="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105 pointer-events-none">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300"></div>
+                <!-- Kontak & Sosmed -->
+                <div class="flex flex-wrap gap-4 mb-12">
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-white/10 border border-white/20 text-sm font-medium hover:bg-white hover:text-black transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-envelope"></i> Email Me
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-white/10 border border-white/20 text-sm font-medium hover:bg-white hover:text-black transition-all flex items-center gap-2">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-white/10 border border-white/20 text-sm font-medium hover:bg-white hover:text-black transition-all flex items-center gap-2">
+                        <i class="fa-brands fa-instagram"></i> Instagram
+                    </a>
+                </div>
+
+                <!-- Experience Lists -->
+                <div class="space-y-10">
                     
-                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        <h3 class="text-xl md:text-2xl font-bold text-white mb-1">Company Profile PT. X</h3>
-                        <p class="text-gray-300 text-sm font-medium flex items-center opacity-70 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-play text-xs mr-2"></i> Klik saya
-                        </p>
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4 border-b border-white/10 pb-2">Experience Company</h3>
+                        <ul class="text-xl md:text-2xl font-light text-gray-200 space-y-2">
+                            <li>OG Esports</li>
+                            <li>Tencent / Level Infinite</li>
+                            <li>Geek Fam ID</li>
+                            <li>Summarecon Agung Tbk.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4 border-b border-white/10 pb-2">Game Hire</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 rounded-lg bg-zinc-900 text-gray-300 text-sm">Honor of Kings</span>
+                            <span class="px-4 py-2 rounded-lg bg-zinc-900 text-gray-300 text-sm">Mobile Legends</span>
+                            <span class="px-4 py-2 rounded-lg bg-zinc-900 text-gray-300 text-sm">Gangstar Mirage City</span>
+                            <span class="px-4 py-2 rounded-lg bg-zinc-900 text-gray-300 text-sm">POE 2</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4 border-b border-white/10 pb-2">Event Hire</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-gray-300 text-sm">Asian Games 2026</span>
+                            <span class="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-gray-300 text-sm">Esport World Cup</span>
+                            <span class="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-gray-300 text-sm">IKL Fall 2026</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4 border-b border-white/10 pb-2">Project Hire</h3>
+                        <p class="text-lg text-gray-400 font-light">PT. Liugong Indonesia, dll.</p>
+                    </div>
+
+                </div>
+
+                <!-- Pendidikan & Prestasi -->
+                <div class="mt-16 pt-10 border-t border-white/10">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                        <div class="flex items-center gap-3 bg-zinc-900 px-4 py-3 rounded-xl border border-zinc-800">
+                            <i class="fa-solid fa-language text-xl text-gray-400"></i>
+                            <div>
+                                <p class="text-xs text-gray-500">English Grade</p>
+                                <p class="text-sm font-bold text-white">Duolingo Certified</p>
+                            </div>
+                        </div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Sertifikat & Prestasi <i class="fa-solid fa-arrow-right ml-2"></i></h3>
+                    </div>
+
+                    <!-- Slide Horizontal Prestasi -->
+                    <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 hide-scrollbar pb-4">
+                        <div class="snap-start shrink-0 w-64 h-40 bg-zinc-900 rounded-xl overflow-hidden relative">
+                            <img src="https://placehold.co/600x400/27272a/52525b?text=Sertifikat+1" class="w-full h-full object-cover opacity-60">
+                            <div class="absolute bottom-3 left-3"><p class="text-xs font-bold">Best Videographer 2024</p></div>
+                        </div>
+                        <div class="snap-start shrink-0 w-64 h-40 bg-zinc-900 rounded-xl overflow-hidden relative">
+                            <img src="https://placehold.co/600x400/27272a/52525b?text=Sertifikat+2" class="w-full h-full object-cover opacity-60">
+                            <div class="absolute bottom-3 left-3"><p class="text-xs font-bold">Tencent Masterclass</p></div>
+                        </div>
+                        <div class="snap-start shrink-0 w-64 h-40 bg-zinc-900 rounded-xl overflow-hidden relative">
+                            <img src="https://placehold.co/600x400/27272a/52525b?text=Sertifikat+3" class="w-full h-full object-cover opacity-60">
+                            <div class="absolute bottom-3 left-3"><p class="text-xs font-bold">Editing Certification</p></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="group relative rounded-2xl overflow-hidden aspect-video bg-gray-900 cursor-pointer">
-                    <img src="https://placehold.co/1280x720/1f2937/4b5563?text=THUMBNAIL+VIDEO+2" class="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105 pointer-events-none">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300"></div>
-                    
-                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        <h3 class="text-xl md:text-2xl font-bold text-white mb-1">Music Video "Ruang"</h3>
-                        <p class="text-gray-300 text-sm font-medium flex items-center opacity-70 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-play text-xs mr-2"></i> Klik saya
-                        </p>
-                    </div>
-                </div>
-
             </div>
         </section>
 
-        <!-- SECTION: FOTO -->
-        <section id="section-foto" class="section-transition absolute inset-0 w-full h-full hidden opacity-0 translate-y-8 z-0 overflow-y-auto pt-28 pb-16 px-4 sm:px-8">
+        <!-- ========================================== -->
+        <!-- SECTION: VIDEO (Highlights & Sliders)      -->
+        <!-- ========================================== -->
+        <section id="section-video" class="section-transition absolute inset-0 w-full h-full hidden opacity-0 z-0 overflow-y-auto hide-scrollbar pt-32 pb-24 px-4 sm:px-8">
             <div class="max-w-7xl mx-auto">
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
+                
+                <!-- Highlight (Kotak Besar) -->
+                <div class="mb-12">
+                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-6">Highlighted Projects</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Video Item (Click to Modal) -->
+                        <div onclick="openModal('Tencent Level Infinite - Promo', 'video')" class="group relative rounded-2xl overflow-hidden aspect-video bg-gray-900 cursor-pointer pointer-events-auto border border-white/5">
+                            <img src="https://placehold.co/1280x720/1f2937/4b5563?text=TENCENT+THUMBNAIL" class="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105 pointer-events-none">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            <!-- Fake Views Top Right -->
+                            <div class="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center text-xs text-gray-300 font-medium">
+                                <i class="fa-solid fa-eye mr-2"></i> 1.2M
+                            </div>
+                            
+                            <div class="absolute bottom-0 left-0 w-full p-6">
+                                <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Tencent / Level Infinite</h3>
+                                <p class="text-gray-400 text-sm flex items-center">
+                                    <i class="fa-solid fa-play text-xs mr-2"></i> Klik untuk putar
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Video Item -->
+                        <div onclick="openModal('OG Esports - Highlights', 'video')" class="group relative rounded-2xl overflow-hidden aspect-video bg-gray-900 cursor-pointer pointer-events-auto border border-white/5">
+                            <img src="https://placehold.co/1280x720/1f2937/4b5563?text=OG+ESPORTS" class="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105 pointer-events-none">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            <div class="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center text-xs text-gray-300 font-medium">
+                                <i class="fa-solid fa-eye mr-2"></i> 845K
+                            </div>
+                            
+                            <div class="absolute bottom-0 left-0 w-full p-6">
+                                <h3 class="text-xl md:text-2xl font-bold text-white mb-2">OG Esports</h3>
+                                <p class="text-gray-400 text-sm flex items-center">
+                                    <i class="fa-solid fa-play text-xs mr-2"></i> Klik untuk putar
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Projects (Slide Samping) -->
+                <div>
+                    <div class="flex justify-between items-end mb-6">
+                        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">More Projects</h2>
+                        <span class="text-xs text-gray-600">Slide <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
                     
-                    <div class="group relative overflow-hidden rounded-xl bg-gray-900 cursor-pointer aspect-square">
+                    <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 hide-scrollbar pb-4">
+                        
+                        <!-- Portrait/Reels Format Thumbnail -->
+                        <div onclick="openModal('Honor of Kings - Reels', 'portrait')" class="snap-start shrink-0 w-48 sm:w-60 aspect-[3/4] bg-zinc-900 rounded-xl overflow-hidden relative cursor-pointer group pointer-events-auto">
+                            <!-- Gambar dipotong (object-cover) awalnya -->
+                            <img src="https://placehold.co/800x1200/27272a/52525b?text=HOK+REELS" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                            <div class="absolute top-3 right-3 text-xs text-gray-300 font-medium"><i class="fa-solid fa-eye mr-1"></i> 2.1M</div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <h3 class="text-sm font-bold text-white">Honor of Kings</h3>
+                                <p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-play"></i> Reels Promo</p>
+                            </div>
+                        </div>
+
+                        <!-- Portrait/Reels Format Thumbnail -->
+                        <div onclick="openModal('Mobile Legends - Event', 'portrait')" class="snap-start shrink-0 w-48 sm:w-60 aspect-[3/4] bg-zinc-900 rounded-xl overflow-hidden relative cursor-pointer group pointer-events-auto">
+                            <img src="https://placehold.co/800x1200/18181b/3f3f46?text=MLBB+EVENT" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                            <div class="absolute top-3 right-3 text-xs text-gray-300 font-medium"><i class="fa-solid fa-eye mr-1"></i> 560K</div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <h3 class="text-sm font-bold text-white">Mobile Legends</h3>
+                                <p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-play"></i> Event Recap</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Landscape Format Thumbnail -->
+                        <div onclick="openModal('Asian Games 2026', 'video')" class="snap-start shrink-0 w-72 sm:w-80 aspect-video bg-zinc-900 rounded-xl overflow-hidden relative cursor-pointer group pointer-events-auto mt-auto mb-0">
+                            <img src="https://placehold.co/1280x720/1f2937/4b5563?text=ASIAN+GAMES" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                            <div class="absolute top-3 right-3 text-xs text-gray-300 font-medium"><i class="fa-solid fa-eye mr-1"></i> 4.5M</div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <h3 class="text-sm font-bold text-white">Asian Games 26</h3>
+                                <p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-play"></i> Teaser</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION: FOTO                              -->
+        <!-- ========================================== -->
+        <section id="section-foto" class="section-transition absolute inset-0 w-full h-full hidden opacity-0 z-0 overflow-y-auto hide-scrollbar pt-32 pb-24 px-4 sm:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
+                    
+                    <div class="group relative overflow-hidden bg-zinc-900 cursor-pointer pointer-events-auto aspect-square">
                         <img src="https://placehold.co/800x800/1f2937/4b5563?text=FOTO+1" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
-                            <i class="fa-solid fa-expand text-white text-xl sm:text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500"></i>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
+                            <i class="fa-solid fa-expand text-white text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500 mb-2"></i>
+                            <span class="text-white text-xs tracking-widest font-medium">VIEW</span>
                         </div>
                     </div>
                     
-                    <div class="group relative overflow-hidden rounded-xl bg-gray-900 cursor-pointer aspect-square">
+                    <div class="group relative overflow-hidden bg-zinc-900 cursor-pointer pointer-events-auto aspect-square">
                         <img src="https://placehold.co/800x800/27272a/52525b?text=FOTO+2" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
-                            <i class="fa-solid fa-expand text-white text-xl sm:text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500"></i>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
+                            <i class="fa-solid fa-expand text-white text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500 mb-2"></i>
+                            <span class="text-white text-xs tracking-widest font-medium">VIEW</span>
                         </div>
                     </div>
                     
-                    <div class="group relative overflow-hidden rounded-xl bg-gray-900 cursor-pointer aspect-square">
+                    <div class="group relative overflow-hidden bg-zinc-900 cursor-pointer pointer-events-auto aspect-square">
                         <img src="https://placehold.co/800x800/18181b/3f3f46?text=FOTO+3" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
-                            <i class="fa-solid fa-expand text-white text-xl sm:text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500"></i>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
+                            <i class="fa-solid fa-expand text-white text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500 mb-2"></i>
+                            <span class="text-white text-xs tracking-widest font-medium">VIEW</span>
                         </div>
                     </div>
 
-                    <div class="group relative overflow-hidden rounded-xl bg-gray-900 cursor-pointer aspect-square">
-                        <img src="https://placehold.co/800x800/27272a/52525b?text=FOTO+4" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
-                            <i class="fa-solid fa-expand text-white text-xl sm:text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500"></i>
-                        </div>
-                    </div>
-
-                    <div class="group relative overflow-hidden rounded-xl bg-gray-900 cursor-pointer aspect-square">
-                        <img src="https://placehold.co/800x800/1f2937/4b5563?text=FOTO+5" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
-                            <i class="fa-solid fa-expand text-white text-xl sm:text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500"></i>
-                        </div>
-                    </div>
-
-                    <div class="group relative overflow-hidden rounded-xl bg-gray-900 cursor-pointer aspect-square">
-                        <img src="https://placehold.co/800x800/18181b/3f3f46?text=FOTO+6" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
-                            <i class="fa-solid fa-expand text-white text-xl sm:text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500"></i>
+                    <div class="group relative overflow-hidden bg-zinc-900 cursor-pointer pointer-events-auto aspect-square">
+                        <img src="https://placehold.co/800x800/111827/374151?text=FOTO+4" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
+                            <i class="fa-solid fa-expand text-white text-2xl transform scale-50 group-hover:scale-100 transition-transform duration-500 mb-2"></i>
+                            <span class="text-white text-xs tracking-widest font-medium">VIEW</span>
                         </div>
                     </div>
 
@@ -186,18 +329,24 @@
             </div>
         </section>
 
-        <!-- SECTION: FILM -->
-        <section id="section-film" class="section-transition absolute inset-0 w-full h-full hidden opacity-0 translate-y-8 z-0 overflow-y-auto pt-28 pb-16 px-4 sm:px-8">
+        <!-- ========================================== -->
+        <!-- SECTION: FILM                              -->
+        <!-- ========================================== -->
+        <section id="section-film" class="section-transition absolute inset-0 w-full h-full hidden opacity-0 z-0 overflow-y-auto hide-scrollbar pt-32 pb-24 px-4 sm:px-8">
             <div class="max-w-5xl mx-auto">
-                <div class="group relative w-full aspect-[16/9] md:aspect-[2.35/1] rounded-2xl overflow-hidden bg-gray-900 cursor-pointer">
+                <div onclick="openModal('Langkah Tersisa - Short Film', 'video')" class="group relative w-full aspect-[16/9] md:aspect-[2.35/1] rounded-2xl overflow-hidden bg-gray-900 cursor-pointer pointer-events-auto border border-white/5">
                     <img src="https://placehold.co/1920x800/1a1a1a/404040?text=POSTER+FILM" class="w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
                     
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
-                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Langkah Tersisa</h2>
-                        <p class="text-gray-300 text-sm font-medium flex items-center opacity-70 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-play text-xs mr-2"></i> Klik saya
+                    <div class="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center text-xs text-gray-300 font-medium">
+                        <i class="fa-solid fa-eye mr-2"></i> 90K
+                    </div>
+
+                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-8">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Langkah Tersisa</h2>
+                        <p class="text-gray-400 text-sm flex items-center">
+                            <i class="fa-solid fa-play text-xs mr-2"></i> Klik untuk putar
                         </p>
                     </div>
                 </div>
@@ -206,87 +355,47 @@
 
     </main>
 
-    <script>
-        let currentSectionId = 'personal';
-        let isAnimating = false;
-
-        function navigate(targetId) {
-            if (isAnimating || currentSectionId === targetId) return;
-            isAnimating = true;
-
-            const currentSection = document.getElementById('section-' + currentSectionId);
-            const targetSection = document.getElementById('section-' + targetId);
-
-            // Styling Navbar
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-white');
-                btn.classList.add('text-gray-500');
-                const underline = btn.querySelector('.nav-underline');
-                underline.classList.remove('scale-x-100');
-                underline.classList.add('scale-x-0');
-            });
-
-            const activeNav = document.getElementById('nav-' + targetId);
-            activeNav.classList.remove('text-gray-500');
-            activeNav.classList.add('text-white');
-            const activeUnderline = activeNav.querySelector('.nav-underline');
-            activeUnderline.classList.remove('scale-x-0');
-            activeUnderline.classList.add('scale-x-100');
-
-            // Animasi Keluar
-            currentSection.classList.remove('opacity-100', 'translate-y-0', 'z-10');
-            currentSection.classList.add('opacity-0', 'translate-y-8', 'z-0');
-
-            setTimeout(() => {
-                currentSection.classList.add('hidden');
-                targetSection.classList.remove('hidden');
-                
-                void targetSection.offsetWidth;
-
-                // Animasi Masuk
-                targetSection.classList.remove('opacity-0', 'translate-y-8', 'z-0');
-                targetSection.classList.add('opacity-100', 'translate-y-0', 'z-10');
-
-                targetSection.scrollTop = 0;
-                currentSectionId = targetId;
-                
-                setTimeout(() => {
-                    isAnimating = false;
-                }, 500); 
-            }, 500); 
-        }
-
-        // ==========================================
-        // SCRIPT KEAMANAN (ANTI-COPAS / INSPECT)
-        // ==========================================
+    <!-- ========================================== -->
+    <!-- MODAL WINDOW (Untuk Video Player & Link)   -->
+    <!-- ========================================== -->
+    <div id="media-modal" class="modal-leave fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 transition-opacity duration-300">
+        <!-- Close Target Background -->
+        <div class="absolute inset-0 cursor-pointer pointer-events-auto" onclick="closeModal()"></div>
         
-        // 1. Mematikan tombol shortcut keyboard berbahaya (Inspect Element, Save, View Source)
-        document.onkeydown = function(e) {
-            // F12
-            if(event.keyCode == 123) {
-                return false;
-            }
-            // Ctrl+Shift+I (Inspect)
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
-                return false;
-            }
-            // Ctrl+Shift+J (Console)
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
-                return false;
-            }
-            // Ctrl+Shift+C (Inspect/Select)
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
-                return false;
-            }
-            // Ctrl+U (View Source)
-            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
-                return false;
-            }
-            // Ctrl+S (Save Page)
-            if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) {
-                return false;
-            }
-        }
-    </script>
-</body>
-</html>
+        <!-- Modal Content Container -->
+        <div id="modal-content" class="modal-content-leave relative w-full bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl transition-transform duration-300 flex flex-col pointer-events-auto">
+            
+            <!-- Header Modal -->
+            <div class="flex justify-between items-center p-4 sm:px-6 border-b border-zinc-800">
+                <h3 id="modal-title" class="text-white font-bold text-lg truncate pr-4">Judul Video</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center bg-zinc-800 hover:bg-zinc-700 rounded-full">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Player Placeholder -->
+            <div id="modal-player-container" class="w-full bg-black flex justify-center items-center">
+                <!-- Javascript will inject correct aspect ratio placeholder here based on 'video' or 'portrait' type -->
+            </div>
+
+            <!-- Footer / Actions (Validasi / Drive Link) -->
+            <div class="p-5 sm:p-6 bg-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-400 text-center sm:text-left">
+                    Ini adalah cuplikan portofolio. Anda dapat menonton file asli resolusi tinggi yang diunggah oleh klien.
+                </p>
+                <div class="flex shrink-0 gap-3 w-full sm:w-auto">
+                    <!-- Tombol See More / Drive -->
+                    <button class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-medium transition-colors flex justify-center items-center gap-2 border border-zinc-700">
+                        <i class="fa-brands fa-google-drive"></i> Folder
+                    </button>
+                    <!-- Tombol Video Asli -->
+                    <button class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg bg-white text-black hover:bg-gray-200 text-sm font-bold transition-colors flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> Video Asli
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
