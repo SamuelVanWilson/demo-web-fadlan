@@ -358,7 +358,7 @@
     <!-- ========================================== -->
     <!-- MODAL WINDOW (Untuk Video Player & Link)   -->
     <!-- ========================================== -->
-    <div id="media-modal" class="modal-leave fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 transition-opacity duration-300">
+    <div id="media-modal" class="modal-leave hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 transition-opacity duration-300">
         <!-- Close Target Background -->
         <div class="absolute inset-0 cursor-pointer pointer-events-auto" onclick="closeModal()"></div>
         
@@ -399,3 +399,118 @@
 
 
     <script>
+        // --- LOGIKA SINGLE PAGE APPLICATION (SPA) ---
+        let currentSectionId = 'personal';
+
+        function navigate(targetId) {
+            if (currentSectionId === targetId) return;
+
+            const currentSection = document.getElementById('section-' + currentSectionId);
+            const targetSection = document.getElementById('section-' + targetId);
+
+            // Styling Navbar Buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-white');
+                btn.classList.add('text-gray-500');
+                const underline = btn.querySelector('.nav-underline');
+                underline.classList.remove('scale-x-100');
+                underline.classList.add('scale-x-0');
+            });
+
+            // Aktifkan navigasi target
+            const activeNav = document.getElementById('nav-' + targetId);
+            activeNav.classList.remove('text-gray-500');
+            activeNav.classList.add('text-white');
+            const activeUnderline = activeNav.querySelector('.nav-underline');
+            activeUnderline.classList.remove('scale-x-0');
+            activeUnderline.classList.add('scale-x-100');
+
+            // Fade Out Section Saat Ini
+            currentSection.classList.remove('opacity-100', 'z-10');
+            currentSection.classList.add('opacity-0', 'z-0');
+
+            // Tunggu animasi fade out selesai, baru hilangkan (display:none) dan munculkan yang baru
+            setTimeout(() => {
+                currentSection.classList.add('hidden');
+                targetSection.classList.remove('hidden');
+                
+                // Trigger reflow agar animasi CSS bekerja
+                void targetSection.offsetWidth;
+
+                // Fade In Section Baru
+                targetSection.classList.remove('opacity-0', 'z-0');
+                targetSection.classList.add('opacity-100', 'z-10');
+
+                // Reset scroll posisi section target ke atas
+                targetSection.scrollTop = 0;
+                currentSectionId = targetId;
+                
+            }, 300); // 300ms sesuai durasi transisi di CSS (dipercepat sedikit dari sebelumnya)
+        }
+
+        // --- LOGIKA MODAL (WINDOW POP-UP) ---
+        const modal = document.getElementById('media-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalTitle = document.getElementById('modal-title');
+        const playerContainer = document.getElementById('modal-player-container');
+
+        function openModal(title, type) {
+            modalTitle.innerText = title;
+            
+            // Set Player Placeholder based on type
+            if(type === 'portrait') {
+                // Untuk format Reels/TikTok (9:16)
+                modalContent.className = "modal-content-leave relative w-full max-w-sm mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl transition-transform duration-300 flex flex-col pointer-events-auto";
+                playerContainer.innerHTML = `<img src="https://placehold.co/720x1280/1a1a1a/404040?text=MEMUAT+REELS..." class="w-full h-auto aspect-[9/16] object-cover">`;
+            } else {
+                // Untuk format Landscape (16:9)
+                modalContent.className = "modal-content-leave relative w-full max-w-4xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl transition-transform duration-300 flex flex-col pointer-events-auto";
+                playerContainer.innerHTML = `<img src="https://placehold.co/1280x720/1a1a1a/404040?text=MEMUAT+VIDEO..." class="w-full h-auto aspect-video object-cover">`;
+            }
+
+            // Animasi Buka Modal
+            modal.classList.remove('hidden');
+            // Trigger reflow
+            void modal.offsetWidth;
+            
+            modal.classList.remove('modal-leave');
+            modal.classList.add('modal-enter');
+            
+            modalContent.classList.remove('modal-content-leave');
+            modalContent.classList.add('modal-content-enter');
+        }
+
+        function closeModal() {
+            // Animasi Tutup Modal
+            modal.classList.remove('modal-enter');
+            modal.classList.add('modal-leave');
+            
+            modalContent.classList.remove('modal-content-enter');
+            modalContent.classList.add('modal-content-leave');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                playerContainer.innerHTML = ''; // Clear video to stop playback
+            }, 300);
+        }
+
+        // ==========================================
+        // SCRIPT KEAMANAN (ANTI-COPAS / INSPECT)
+        // ==========================================
+        document.onkeydown = function(e) {
+            // F12
+            if(event.keyCode == 123) { return false; }
+            // Ctrl+Shift+I (Inspect)
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; }
+            // Ctrl+Shift+J (Console)
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
+            // Ctrl+Shift+C (Inspect/Select)
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; }
+            // Ctrl+U (View Source)
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
+            // Ctrl+S (Save Page)
+            if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) { return false; }
+        }
+    </script>
+</body>
+</html>
